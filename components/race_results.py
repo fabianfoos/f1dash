@@ -385,7 +385,7 @@ class RaceResultsComponent:
         fig = px.line(
             x = race_data['LapNumber'],
             y = race_data['Position'],
-            color = race_data['Driver'],
+            color = race_data['FullName'],
             labels = {
                 'x': 'Número de Vuelta',
                 'y': 'Posición',
@@ -435,11 +435,11 @@ class RaceResultsComponent:
     def _get_driver_image(self, driver_id: str) -> str:
         """Obtiene URL de imagen del piloto"""
         # En un entorno real, esto se conectaría a una base de datos de imágenes
-        return DEFAULT_IMAGES['driver']
+        return 'assets/piloto.png'
 
     def _get_constructor_logo(self, constructor_id: str) -> str:
         """Obtiene URL del logo de la escudería"""
-        return DEFAULT_IMAGES['constructor']
+        return 'assets/' + constructor_id + '.png'
 
     def _create_empty_pole_card(self) -> dbc.Card:
         """Crea tarjeta vacía de pole position"""

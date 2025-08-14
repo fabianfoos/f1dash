@@ -310,7 +310,7 @@ class Track3DComponent:
                 return fig
 
             z_coords = np.array(track_data['z'])
-            distance = np.linspace(0, circuit_info.get('length', len(z_coords)), len(z_coords))
+            distance = np.linspace(0, track_data['distance'], len(z_coords))
 
             # Línea principal de elevación
             fig.add_trace(go.Scatter(
@@ -321,7 +321,7 @@ class Track3DComponent:
                 line=dict(color=COLORS['primary'], width=3),
                 fillcolor=f"rgba{tuple(list(bytes.fromhex(COLORS['primary'][1:])) + [0.3])}",
                 name='Elevación',
-                hovertemplate='Distancia: %{x:.2f}km<br>' +
+                hovertemplate='Distancia: %{x:.2f}m<br>' +
                               'Elevación: %{y:.1f}m<extra></extra>'
             ))
 

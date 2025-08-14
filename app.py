@@ -13,6 +13,7 @@ from utils.data_loader import F1DataLoader
 from components.world_map import world_map_component
 from components.track_3d import track_3d_component
 from components.race_results import race_results_component
+from components.season import season_component
 
 # Configuración de logging
 logging.basicConfig(level=logging.INFO)
@@ -65,23 +66,20 @@ app.layout = dbc.Container([
                                 clearable=False,
                                 style={'color': COLORS['text']}
                             )
-                        ], width=6),
-
-                        dbc.Col([
-                            html.Label("Filtrar Circuitos:", className="form-label"),
-                            dcc.Dropdown(
-                                id='circuit-filter',
-                                options=[],
-                                value=None,
-                                placeholder="Todos los circuitos",
-                                clearable=True
-                            )
-                        ], width=6)
+                        ], width=12),
                     ])
                 ])
             ])
         ], width=12)
     ], className="mb-4"),
+
+    dbc.Row([
+        dbc.Col([
+            dbc.Card([
+                dcc.Graph(id='season-summary')
+            ])
+        ], width=12),
+    ]),
 
     # Loading y almacenamiento de datos
     dcc.Loading(
@@ -219,7 +217,7 @@ app.layout = dbc.Container([
 @app.callback(
     [Output('circuits-data', 'data'),
      Output('races-data', 'data'),
-     Output('circuit-filter', 'options')],
+     Output('season-summary', 'figure')],
     [Input('year-selector', 'value')]
 )
 def load_initial_data(selected_year):
@@ -234,14 +232,7 @@ def load_initial_data(selected_year):
         if races_df is None:
             races_df = pd.DataFrame()
 
-        circuit_options = []
-        if not races_df.empty:
-            circuit_options = [
-                {'label': row['circuitName'], 'value': row['circuitId']}
-                for _, row in races_df.iterrows()
-            ]
-
-        return circuits_df.to_dict('records'), races_df.to_dict('records'), circuit_options
+        return circuits_df.to_dict('records'), races_df.to_dict('records'), season_component.create_season_summary(selected_year)
     except Exception as e:
         logger.error(f"Error cargando datos iniciales: {e}")
         return [], [], []
@@ -251,19 +242,15 @@ def load_initial_data(selected_year):
     Output('world-map', 'figure'),
     [Input('circuits-data', 'data'),
      Input('races-data', 'data'),
-     Input('year-selector', 'value'),
-     Input('circuit-filter', 'value')]
+     Input('year-selector', 'value')]
 )
-def update_world_map(circuits_data, races_data, selected_year, circuit_filter):
+def update_world_map(circuits_data, races_data, selected_year):
     try:
         if not circuits_data:
             return world_map_component._create_empty_map()
 
         circuits_df = pd.DataFrame(circuits_data)
         races_df = pd.DataFrame(races_data) if races_data else pd.DataFrame()
-
-        if circuit_filter and not races_df.empty:
-            races_df = races_df[races_df['circuitId'] == circuit_filter]
 
         return world_map_component.create_circuits_map(circuits_df, races_df, selected_year)
     except Exception as e:
@@ -320,12 +307,12 @@ def handle_circuit_selection(click_data, circuits_data, races_data):
 def update_3d_visualization(selected_circuit_data):
     try:
         if not selected_circuit_data or 'circuit_id' not in selected_circuit_data:
-            return go.Figure(), go.Figure()
+            return go.Figure(), go.Figure(), go.Figure()
 
         loader = F1DataLoader()
         track_data = loader.load_track_elevation_data(selected_circuit_data)
         fig_3d = track_3d_component.create_3d_track(track_data, selected_circuit_data['circuit_info'])
-        fig_elev = track_3d_component.create_elevation_profile(track_data, selected_circuit_data['circuit_info'])
+        fig_elev = track_3d_component.create_elevation_profile(track_data, selected_circuit_data)
         fig_positions = race_results_component.create_driver_positions_lines(loader.load_race_positions_laps(
             selected_circuit_data['races_info'][0]['season'],
             selected_circuit_data['races_info'][0]['round']
@@ -334,7 +321,7 @@ def update_3d_visualization(selected_circuit_data):
         return fig_3d, fig_elev, fig_positions
     except Exception as e:
         logger.error(f"Error actualizando visualización 3D: {e}")
-        return go.Figure(), go.Figure()
+        return go.Figure(), go.Figure(), go.Figure()
 
 
 @app.callback(

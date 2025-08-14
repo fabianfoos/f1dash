@@ -31,6 +31,9 @@ class F1DataLoader:
         positions = session.laps[['Driver', 'LapNumber', 'Position']].copy()
         positions['LapNumber'] = positions['LapNumber'].astype(int)
 
+        # Agregar columna con el nombre completo del piloto
+        positions['FullName'] = positions['Driver'].map(lambda drv: session.get_driver(drv)['FullName'])
+
         return positions
 
     # --- Métodos que faltaban ---
@@ -48,7 +51,9 @@ class F1DataLoader:
         session.load()
 
         # Obtener datos de la pista
-        track = session.laps.pick_fastest().telemetry
+        fastest = session.laps.pick_fastest()
+        distance = fastest.get_car_data().add_distance()['Distance'].max()
+        track = fastest.telemetry
 
         # Coordenadas de la pista (x, y, z)
         x = track['X'].tolist()
@@ -91,6 +96,7 @@ class F1DataLoader:
             'x': x,
             'y': y,
             'z': z,
+            'distance': distance,
         #    'sectors': sectors,
         #    'drs_zones': drs_zones,
         #    'turns': turns
