@@ -338,7 +338,7 @@ class Track3DComponent:
 
             fig.update_layout(
                 title=f"Perfil de Elevación - {circuit_info.get('circuitName', 'Circuito')}",
-                xaxis_title='Distancia (km)',
+                xaxis_title='Distancia (m)',
                 yaxis_title='Elevación (m)',
                 height=300,
                 margin=dict(l=50, r=20, t=50, b=50),
