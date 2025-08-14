@@ -1,0 +1,388 @@
+/* F1 Dashboard - Estilos Personalizados */
+
+/* Variables de colores F1 */
+:root {
+    --f1-red: #E10600;
+    --f1-black: #15151E;
+    --f1-orange: #FF6600;
+    --f1-white: #FFFFFF;
+    --f1-silver: #C0C0C0;
+    --f1-gold: #FFD700;
+    --f1-bronze: #CD7F32;
+}
+
+/* Estilos generales */
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background-color: #f8f9fa;
+    color: var(--f1-black);
+}
+
+/* Header principal */
+.main-header {
+    background: linear-gradient(135deg, var(--f1-red), var(--f1-orange));
+    color: white;
+    padding: 2rem 0;
+    margin-bottom: 2rem;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.main-header h1 {
+    font-weight: 700;
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+}
+
+/* Cards personalizadas */
+.custom-card {
+    border: none;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    border-radius: 12px;
+}
+
+.custom-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+}
+
+.custom-card .card-header {
+    background: linear-gradient(45deg, var(--f1-red), var(--f1-orange));
+    color: white;
+    border-radius: 12px 12px 0 0;
+    font-weight: 600;
+    border: none;
+}
+
+/* Pole position card especial */
+.pole-position-card {
+    background: linear-gradient(135deg, #FFD700, #FFA500);
+    border: 3px solid var(--f1-red);
+    animation: pulse-glow 2s ease-in-out infinite alternate;
+}
+
+@keyframes pulse-glow {
+    from {
+        box-shadow: 0 0 20px rgba(255, 215, 0, 0.5);
+    }
+    to {
+        box-shadow: 0 0 30px rgba(255, 215, 0, 0.8);
+    }
+}
+
+/* Posiciones en tabla */
+.position-1 {
+    background-color: var(--f1-gold) !important;
+    color: var(--f1-black) !important;
+    font-weight: bold;
+}
+
+.position-2 {
+    background-color: var(--f1-silver) !important;
+    color: var(--f1-black) !important;
+    font-weight: bold;
+}
+
+.position-3 {
+    background-color: var(--f1-bronze) !important;
+    color: white !important;
+    font-weight: bold;
+}
+
+/* Estilos para dropdowns */
+.Select-control {
+    border: 2px solid #e9ecef;
+    border-radius: 8px;
+    transition: border-color 0.3s ease;
+}
+
+.Select-control:hover,
+.Select--is-focused .Select-control {
+    border-color: var(--f1-red);
+}
+
+/* Botones personalizados */
+.btn-f1 {
+    background: linear-gradient(45deg, var(--f1-red), var(--f1-orange));
+    border: none;
+    color: white;
+    font-weight: 600;
+    border-radius: 8px;
+    padding: 0.75rem 1.5rem;
+    transition: all 0.3s ease;
+}
+
+.btn-f1:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(225, 6, 0, 0.3);
+    color: white;
+}
+
+/* Tabs personalizadas */
+.nav-tabs .nav-link {
+    border: none;
+    color: var(--f1-black);
+    font-weight: 500;
+    border-radius: 8px 8px 0 0;
+    margin-right: 5px;
+    transition: all 0.3s ease;
+}
+
+.nav-tabs .nav-link:hover {
+    background-color: #f8f9fa;
+    color: var(--f1-red);
+}
+
+.nav-tabs .nav-link.active {
+    background: linear-gradient(45deg, var(--f1-red), var(--f1-orange));
+    color: white;
+    border: none;
+}
+
+/* Tarjetas de pilotos */
+.driver-card {
+    transition: all 0.3s ease;
+    border-radius: 12px;
+    overflow: hidden;
+}
+
+.driver-card:hover {
+    transform: scale(1.03);
+    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.15);
+}
+
+.driver-image {
+    width: 80px;
+    height: 80px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 3px solid var(--f1-red);
+    transition: border-color 0.3s ease;
+}
+
+.driver-card:hover .driver-image {
+    border-color: var(--f1-orange);
+}
+
+/* Gráficos y mapas */
+.plotly-graph-div {
+    border-radius: 12px;
+    overflow: hidden;
+}
+
+/* Loading spinners */
+._dash-loading {
+    color: var(--f1-red);
+}
+
+._dash-loading-callback {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100px;
+}
+
+/* Sectores de pista */
+.sector-1 { color: #00FF00; font-weight: bold; }
+.sector-2 { color: #FFFF00; font-weight: bold; }
+.sector-3 { color: #FF0000; font-weight: bold; }
+
+/* DRS zones */
+.drs-zone {
+    color: #00FFFF;
+    font-weight: bold;
+    text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5);
+}
+
+/* Información de circuitos */
+.circuit-info {
+    background: linear-gradient(135deg, #ffffff, #f8f9fa);
+    border-radius: 12px;
+    padding: 1.5rem;
+    border-left: 4px solid var(--f1-red);
+}
+
+.circuit-info h5 {
+    color: var(--f1-red);
+    font-weight: 700;
+    margin-bottom: 1rem;
+}
+
+.circuit-info .fa {
+    color: var(--f1-orange);
+    margin-right: 8px;
+}
+
+/* Responsive design */
+@media (max-width: 768px) {
+    .main-header {
+        padding: 1rem 0;
+    }
+
+    .main-header h1 {
+        font-size: 1.8rem;
+    }
+
+    .driver-card {
+        margin-bottom: 1rem;
+    }
+
+    .custom-card {
+        margin-bottom: 1rem;
+    }
+}
+
+@media (max-width: 576px) {
+    .container-fluid {
+        padding-left: 10px;
+        padding-right: 10px;
+    }
+
+    .driver-image {
+        width: 60px;
+        height: 60px;
+    }
+
+    .btn-f1 {
+        padding: 0.5rem 1rem;
+        font-size: 0.9rem;
+    }
+}
+
+/* Animaciones adicionales */
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.fade-in {
+    animation: fadeIn 0.6s ease-out;
+}
+
+/* Scrollbar personalizada */
+::-webkit-scrollbar {
+    width: 8px;
+}
+
+::-webkit-scrollbar-track {
+    background: #f1f1f1;
+    border-radius: 10px;
+}
+
+::-webkit-scrollbar-thumb {
+    background: var(--f1-red);
+    border-radius: 10px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: var(--f1-orange);
+}
+
+/* Tooltips mejorados */
+.tooltip-inner {
+    background-color: var(--f1-black);
+    color: white;
+    font-size: 0.9rem;
+    border-radius: 6px;
+    padding: 8px 12px;
+}
+
+/* Estados de carga */
+.loading-placeholder {
+    background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
+    background-size: 200% 100%;
+    animation: loading-shimmer 1.5s infinite;
+    border-radius: 8px;
+    height: 20px;
+    margin-bottom: 10px;
+}
+
+@keyframes loading-shimmer {
+    0% {
+        background-position: -200% 0;
+    }
+    100% {
+        background-position: 200% 0;
+    }
+}
+
+/* Badges personalizadas */
+.badge-f1 {
+    background: linear-gradient(45deg, var(--f1-red), var(--f1-orange));
+    color: white;
+    font-weight: 600;
+    padding: 0.5rem 1rem;
+    border-radius: 20px;
+    font-size: 0.85rem;
+}
+
+/* Footer */
+.footer {
+    background-color: var(--f1-black);
+    color: #cccccc;
+    padding: 2rem 0;
+    margin-top: 4rem;
+}
+
+.footer a {
+    color: var(--f1-orange);
+    text-decoration: none;
+    transition: color 0.3s ease;
+}
+
+.footer a:hover {
+    color: var(--f1-red);
+    text-decoration: underline;
+}
+
+/* Mejoras para tablas */
+.dash-table-container {
+    border-radius: 12px;
+    overflow: hidden;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+}
+
+.dash-table-container .row {
+    margin: 0;
+}
+
+.dash-table-container .cell {
+    padding: 12px 16px;
+    border-bottom: 1px solid #e9ecef;
+}
+
+/* Indicadores de rendimiento */
+.performance-indicator {
+    display: inline-block;
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    margin-right: 8px;
+}
+
+.performance-fast { background-color: #00FF00; }
+.performance-medium { background-color: #FFFF00; }
+.performance-slow { background-color: #FF0000; }
+
+/* Estilos especiales para gráficos 3D */
+.track-3d-container {
+    background: radial-gradient(circle, #1a1a2e, #16213e);
+    border-radius: 12px;
+    padding: 1rem;
+}
+
+/* Efectos hover para elementos interactivos */
+.interactive-element {
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.interactive-element:hover {
+    transform: scale(1.02);
+    filter: brightness(1.1);
+}
