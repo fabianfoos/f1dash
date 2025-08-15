@@ -111,15 +111,17 @@ app.layout = dbc.Container([
 
         # Información de circuito
         dbc.Col([
-            dbc.Card([
-                dbc.CardHeader([
-                    html.H4([
-                        html.I(className="fas fa-info-circle me-2"),
-                        "Información del Circuito"
-                    ], className="mb-0")
-                ]),
-                dbc.CardBody([html.Div(id='circuit-info-panel')])
-            ])
+            dbc.Row([
+                dbc.Card([
+                    dbc.CardHeader([
+                        html.H4([
+                            html.I(className="fas fa-info-circle me-2"),
+                            "Información del Circuito"
+                        ], className="mb-0")
+                    ]),
+                    dbc.CardBody([html.Div(id='circuit-info-panel')])
+                ])
+            ]),
         ], width=12, lg=4)
     ], className="mb-4"),
 
@@ -131,7 +133,7 @@ app.layout = dbc.Container([
                     dbc.CardHeader([
                         html.H4([
                             html.I(className="fas fa-cube me-2"),
-                            "Vista 3D del Circuito"
+                            "Vista del Circuito"
                         ], className="mb-0")
                     ]),
                     dbc.CardBody([
@@ -184,7 +186,7 @@ app.layout = dbc.Container([
                 dbc.Card([
                     dbc.CardHeader([
                         html.H4([
-                            html.I(className="fas fa-trophy me-2"),
+                            html.I(className="fas fa-chart-bar me-2"),
                             "Posiciones de los Pilotos"
                         ], className="mb-0")
                     ]),
@@ -326,9 +328,9 @@ def update_3d_visualization(selected_circuit_data):
 
 @app.callback(
     Output('tab-content', 'children'),
-    [Input('results-tabs', 'active_tab')],
-    [State('selected-circuit-data', 'data'),
-     State('year-selector', 'value')]
+    [Input('results-tabs', 'active_tab'),
+     Input('selected-circuit-data', 'data')],
+    [State('year-selector', 'value')]
 )
 def update_results_content(active_tab, selected_circuit_data, selected_year):
     try:

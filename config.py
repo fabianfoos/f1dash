@@ -14,8 +14,8 @@ IMAGES_DIR = ASSETS_DIR / "images"
 # Configuración de la aplicación
 APP_CONFIG = {
     'debug': True,
-    'host': '127.0.0.1',
-    'port': 8050,
+    'host': '0.0.0.0',
+    'port': 80,
     'title': 'F1 Dashboard Interactivo'
 }
 

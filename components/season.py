@@ -4,32 +4,34 @@ from plotly.io import show
 from plotly.subplots import make_subplots
 
 import fastf1 as ff1
+from fastf1 import plotting
 
 class SeasonComponent:
     def create_season_summary(self, season) -> go.Figure:
         schedule = ff1.get_event_schedule(season, include_testing=False)
 
         standings = []
-        # Shorten the event names by trimming Grand Prix from the name.
-        # This will be used to label our graph.
+        # Acorta los nombres de los eventos eliminando 'Grand Prix' del nombre.
+        # Esto se usará para etiquetar nuestro gráfico.
         short_event_names = []
 
+        # Filtra solo los eventos que ya han ocurrido
         schedule = schedule[schedule['EventDate'] < pd.to_datetime('today')]
 
         for _, event in schedule.iterrows():
             event_name, round_number = event["EventName"], event["RoundNumber"]
             short_event_names.append(event_name.replace("Grand Prix", "").strip())
 
-            # Only need to load the results data
+            # Solo es necesario cargar los datos de resultados
             race = ff1.get_session(season, event_name, "R")
             race.load(laps=False, telemetry=False, weather=False, messages=False)
 
-            # Add sprint race points if applicable
+            # Añade puntos de la carrera sprint si aplica
             sprint = None
-            # F1 has used different names for the sprint race event format
-            # From 2024 onwards, it has been "sprint_qualifying"
-            # In 2023, you should match on "sprint_shootout"
-            # In 2022 and 2021, you should match on "sprint"
+            # F1 ha usado diferentes nombres para el formato de evento sprint
+            # Desde 2024 se llama "sprint_qualifying"
+            # En 2023 debes buscar "sprint_shootout"
+            # En 2022 y 2021 debes buscar "sprint"
             if event["EventFormat"] == "sprint_qualifying":
                 sprint = ff1.get_session(season, event_name, "S")
                 sprint.load(laps=False, telemetry=False, weather=False, messages=False)
@@ -47,8 +49,8 @@ class SeasonComponent:
                         sprint.results["Abbreviation"] == abbreviation
                     ]
                     if not driver_row.empty:
-                        # We need the values[0] accessor because driver_row is actually
-                        # returned as a dataframe with a single row
+                    # Necesitamos usar values[0] porque driver_row es realmente
+                    # un dataframe con una sola fila
                         sprint_points = driver_row["Points"].values[0]
 
                 standings.append(
@@ -56,6 +58,8 @@ class SeasonComponent:
                         "EventName": event_name,
                         "RoundNumber": round_number,
                         "Driver": abbreviation,
+                        "DriverFullName": ff1.plotting.get_driver_name(abbreviation, race),
+                        "Abbreviation": abbreviation,
                         "Points": race_points + sprint_points,
                         "Position": race_position,
                     }
@@ -67,14 +71,13 @@ class SeasonComponent:
             index="Driver", columns="RoundNumber", values="Points"
         ).fillna(0)
 
-        # Save the final drivers standing and sort the data such that the lowest-
-        # scoring driver is towards the bottom
+        # Guarda la clasificación final de pilotos y ordena los datos de modo que el piloto con menos puntos quede abajo
         heatmap_data["total_points"] = heatmap_data.sum(axis=1)
         heatmap_data = heatmap_data.sort_values(by="total_points", ascending=True)
         total_points = heatmap_data["total_points"].values
         heatmap_data = heatmap_data.drop(columns=["total_points"])
 
-        # Do the same for position.
+        # lo mismo para la posición.
         position_data = df.pivot(
             index="Driver", columns="RoundNumber", values="Position"
         ).fillna("N/A")
@@ -83,6 +86,7 @@ class SeasonComponent:
             [
                 {
                     "position": position_data.at[driver, race],
+                    "driver_full_name": df.loc[df["Driver"] == driver, "DriverFullName"].values[0],
                 }
                 for race in schedule["RoundNumber"]
             ]
@@ -97,21 +101,20 @@ class SeasonComponent:
         )
         fig.update_layout(width=900, height=800)
 
-        # Per round summary heatmap
+        # Mapa de calor resumen por carrera
         fig.add_trace(
             go.Heatmap(
-                # Use the race names as x labels and the driver abbreviations
-                # as the y labels
+                # Usa los nombres de las carreras como etiquetas en x y las abreviaturas de los pilotos en y
                 x=short_event_names,
                 y=heatmap_data.index,
                 z=heatmap_data.values,
-                # Use the points scored as overlay text
+                # Usa los puntos obtenidos como hover
                 text=heatmap_data.values,
                 texttemplate="%{text}",
                 textfont={"size": 12},
                 customdata=hover_info,
                 hovertemplate=(
-                    "Piloto: %{y}<br>"
+                    "Piloto: %{customdata.driver_full_name}<br>"
                     "Carrera: %{x}<br>"
                     "Puntos: %{z}<br>"
                     "Posición: %{customdata.position}<extra></extra>"
@@ -119,15 +122,14 @@ class SeasonComponent:
                 colorscale="YlGnBu",
                 showscale=False,
                 zmin=0,
-                # We need to set zmax for the two heatmaps separately as the
-                # max value in the total points plot is significantly higher.
+                # Es necesario establecer zmax para los dos mapas de calor por separado ya que el valor máximo en el gráfico de puntos totales es mucho mayor.
                 zmax=heatmap_data.values.max(),
             ),
             row=1,
             col=1,
         )
 
-        # Heatmap for total points
+        # Mapa de calor para puntos totales
         fig.add_trace(
             go.Heatmap(
                 x=["Total de Puntos"] * len(total_points),

@@ -28,7 +28,7 @@ class F1DataLoader:
         session.load()
 
         # Obtener las posiciones por vuelta
-        positions = session.laps[['Driver', 'LapNumber', 'Position']].copy()
+        positions = session.laps[['Driver', 'LapNumber', 'Position', 'PitInTime']].copy()
         positions['LapNumber'] = positions['LapNumber'].astype(int)
 
         # Agregar columna con el nombre completo del piloto

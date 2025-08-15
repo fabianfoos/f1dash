@@ -393,6 +393,12 @@ class RaceResultsComponent:
             },
             text=None  # No mostrar etiquetas por defecto
         )
+
+        # Obtener el mapeo de colores de Plotly Express para cada piloto
+        color_map = {}
+        for trace in fig.data:
+            if hasattr(trace, 'name') and hasattr(trace, 'line') and hasattr(trace.line, 'color'):
+                color_map[trace.name] = trace.line.color
         # Invertir el eje Y para que la posición 1 esté arriba
         fig.update_yaxes(autorange='reversed')
         fig.update_layout(showlegend=False)
@@ -400,11 +406,12 @@ class RaceResultsComponent:
         # Ocultar las etiquetas de px.line (por si acaso)
         fig.update_traces(text=None, selector=dict(mode='lines+markers'))
 
-        # Agregar etiquetas al final de cada línea
+        # Agregar etiquetas al final de cada línea y puntos de pit stops
         for driver in race_data['Driver'].unique():
             driver_data = race_data[race_data['Driver'] == driver]
-            
+
             if not driver_data.empty:
+                # Etiqueta al final de la línea
                 last_lap = driver_data['LapNumber'].max()
                 last_point = driver_data[driver_data['LapNumber'] == last_lap]
                 fig.add_scatter(
@@ -417,6 +424,43 @@ class RaceResultsComponent:
                     textfont=dict(size=12, color='black'),
                     hoverinfo='skip'
                 )
+
+                # Puntos de pit stop
+                pit_laps = driver_data[driver_data['PitInTime'].notna()]
+                if not pit_laps.empty:
+                    color_pit = color_map.get(driver_data['FullName'].iloc[0], 'red')
+                    fig.add_scatter(
+                        x=pit_laps['LapNumber'],
+                        y=pit_laps['Position'],
+                        mode='markers',
+                        marker=dict(symbol='diamond', size=10, color=color_pit),
+                        showlegend=False,
+                        hovertemplate=(
+                            'Piloto: %{text}<br>Vuelta: %{x}<br>Posición: %{y}'
+                        ),
+                        text=pit_laps['FullName']
+                    )
+
+        # Mostrar solo la leyenda de pit stop si hay al menos un pit stop
+        hay_pit = race_data['PitInTime'].notna().any()
+        if hay_pit:
+            fig.add_scatter(
+                x=[None],
+                y=[None],
+                mode='markers',
+                marker=dict(symbol='diamond', size=10, color='gray'),
+                name='Pit Stop',
+                showlegend=True,
+                hoverinfo='skip',
+                legendgroup='pitstop'
+            )
+            fig.update_layout(showlegend=True)
+        else:
+            fig.update_layout(showlegend=False)
+        # Ocultar la leyenda de las líneas (trazas principales)
+        for trace in fig.data:
+            if hasattr(trace, 'showlegend') and trace.name != 'Pit Stop':
+                trace.showlegend = False
         return fig
 
     def _seconds_to_time(self, seconds: float) -> str:
